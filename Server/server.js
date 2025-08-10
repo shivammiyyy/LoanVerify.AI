@@ -1,26 +1,42 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import loanRoutes from './routes/loanRoutes.js';
-import { initializeApp } from 'firebase-admin/app';
-import { credential } from 'firebase-admin';
-import logger from './utils/logger.js';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import 'dotenv/config';
+import loanRouter from './routes/loanRoutes.js';
 
-dotenv.config();
-
-initializeApp({
-  credential: credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON)),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-});
+// Firebase Admin setup
+import admin from 'firebase-admin';
+import serviceAccount from process.env.FIREBASE_SERVICE_ACCOUNT_PATH || './firebase/serviceAccountKey.json';
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 
 const app = express();
+
+// Middlewares
 app.use(express.json());
+app.use(cookieParser());
 
-app.use('/api', loanRoutes);
+// CORS: allow frontend to send credentials & cookies
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true 
+}));
 
+// Routes
+app.use('/api', loanRouter);
+
+// Error handler
 app.use((err, req, res, next) => {
-  logger.error(err);
-  res.status(err.statusCode || 500).json({ error: err.message });
+    console.error(err.stack);
+    res.status(500).json({ error: err.message });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => logger.info(`Server listening on port ${port}`));
+// MongoDB connection & Server start
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+    console.log('MongoDB connected');
+    app.listen(process.env.PORT, () => console.log('Server running on port', process.env.PORT));
+})
+.catch(err => console.error('Mongo connect error:', err));
+
+export default app;

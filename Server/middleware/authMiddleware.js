@@ -1,16 +1,20 @@
-import { auth } from 'firebase-admin';
-import logger from '../utils/logger.js';
+import admin from 'firebase-admin';
+import UserLoan from '../model/userModel.js';
 
 export default async function authMiddleware(req, res, next) {
-  const idToken = req.headers.authorization?.split('Bearer ')[1];
-  if (!idToken) return res.status(401).json({ error: 'Missing token' });
+    const sessionCookie = req.cookies.session;
+    if (!sessionCookie)
+        return res.status(401).json({ error: 'Unauthorized: No session cookie' });
 
-  try {
-    const decoded = await auth().verifyIdToken(idToken);
-    req.user = { uid: decoded.uid, phone: decoded.phone_number };
-    next();
-  } catch (err) {
-    logger.error('Token verify failed:', err);
-    res.status(401).json({ error: 'Invalid token' });
-  }
+    try {
+        const decoded = await admin.auth().verifySessionCookie(sessionCookie, true);
+        // Look up by firebaseUid
+        const user = await UserLoan.findOne({ firebaseUid: decoded.uid });
+        if (!user) return res.status(401).json({ error: 'User not found' });
+        req.user = { uid: user._id, firebaseUid: decoded.uid, mobile: user.mobile };
+        next();
+    } catch (err) {
+        res.clearCookie('session');
+        res.status(401).json({ error: 'Invalid session' });
+    }
 }
