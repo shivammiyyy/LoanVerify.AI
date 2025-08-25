@@ -1,6 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { sessionLogin, saveUserData, saveLoanForm, predictLoan, getCurrentUser } from '../controllers/loanController.js';
+import { sessionLogin, saveUserData, saveLoanForm, predictLoan, getCurrentUser } from '../controllers/loanControllers.js';
 
 const router = express.Router();
 

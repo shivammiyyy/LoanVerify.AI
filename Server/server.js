@@ -6,12 +6,15 @@ import 'dotenv/config';
 import loanRouter from './routes/loanRoutes.js';
 
 // Firebase Admin setup
-import admin from 'firebase-admin';
-import serviceAccount from process.env.FIREBASE_SERVICE_ACCOUNT_PATH || './firebase/serviceAccountKey.json';
-admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+import admin from "firebase-admin";
+
+
 
 const app = express();
 
+admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
+});
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());

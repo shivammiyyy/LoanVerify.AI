@@ -1,25 +1,51 @@
+import { Home, Car, Wallet, Building2 } from "lucide-react";
+
 export default function LoanInfoSection() {
+  const loans = [
+    {
+      title: "Home Loans",
+      desc: "Affordable and flexible options to help you buy your dream house with ease.",
+      icon: <Home className="w-12 h-12 text-blue-600" />,
+    },
+    {
+      title: "Auto Loans",
+      desc: "Get quick approval for financing your new or used vehicle purchase.",
+      icon: <Car className="w-12 h-12 text-blue-600" />,
+    },
+    {
+      title: "Personal Loans",
+      desc: "Fast approval loans to meet your personal financial needs without hassle.",
+      icon: <Wallet className="w-12 h-12 text-blue-600" />,
+    },
+    {
+      title: "Business Loans",
+      desc: "Boost your business growth with tailor-made financial support.",
+      icon: <Building2 className="w-12 h-12 text-blue-600" />,
+    },
+  ];
+
   return (
-    <section>
-      <h1 className="text-3xl font-bold mb-4">Welcome to the Loan Eligibility Predictor</h1>
-      <p className="text-gray-600 mb-4">
-        Our tool helps you quickly check your loan eligibility using basic financial details.
-        Simply log in, provide some personal and income data, and our system will give you a
-        prediction based on our trained machine learning model.
-      </p>
-      <h2 className="text-xl font-semibold mt-6 mb-2">What is a Loan?</h2>
-      <p className="text-gray-600 mb-4">
-        A loan is a sum of money borrowed from a financial institution that’s paid back with interest
-        over time. Loan eligibility depends on factors like income, employment status, credit history,
-        and loan amount requested.
-      </p>
-      <h2 className="text-xl font-semibold mt-6 mb-2">Tips to Improve Eligibility</h2>
-      <ul className="list-disc list-inside text-gray-600">
-        <li>Maintain a good credit score</li>
-        <li>Reduce existing debts</li>
-        <li>Show stable and sufficient income</li>
-        <li>Choose an appropriate loan amount and tenure</li>
-      </ul>
+    <section id="loan-info" className="py-20 bg-white">
+      <div className="mx-auto max-w-7xl px-6 text-center">
+        <h2 className="text-3xl font-semibold text-gray-900 mb-12">
+          Loan Categories We Support
+        </h2>
+
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {loans.map((loan, idx) => (
+            <div
+              key={idx}
+              className="p-8 bg-gray-50 rounded-2xl shadow-sm hover:shadow-md transition"
+            >
+              <div className="flex justify-center mb-6">{loan.icon}</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                {loan.title}
+              </h3>
+              <p className="text-gray-600">{loan.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

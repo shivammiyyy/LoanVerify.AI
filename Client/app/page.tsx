@@ -1,38 +1,21 @@
-"use client";
-
-import { useAuth } from "@/components/AuthProvider";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import FeaturesSection from "@/components/FeaturesSection";
+import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
 import LoanInfoSection from "@/components/LoanInfoSection";
+import OtpSection from "@/components/OtpSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
-export default function HomePage() {
-  const { user } = useAuth();
-
+export default function Home() {
   return (
-    <main className="px-6 py-10 max-w-5xl mx-auto">
-      {/* Intro Section */}
+    <main className="flex flex-col items-center">
+      <HeroSection />
+      <FeaturesSection/>
+      <HowItWorksSection />
       <LoanInfoSection />
-
-      {/* Login Section */}
-      <section className="mt-12 text-center">
-        {user ? (
-          <>
-            <p className="mb-4 text-lg font-medium">
-              You are logged in as: <span className="font-bold">{user.phoneNumber}</span>
-            </p>
-            <Link href="/profile">
-              <Button>Go to Profile</Button>
-            </Link>
-          </>
-        ) : (
-          <>
-            <p className="mb-4">Login to check or predict your loan eligibility.</p>
-            <Link href="/login">
-              <Button>Login with Phone OTP</Button>
-            </Link>
-          </>
-        )}
-      </section>
+      <OtpSection />
+      <TestimonialsSection />
+      <Footer/>
     </main>
   );
 }

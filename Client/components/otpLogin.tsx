@@ -43,13 +43,9 @@ function OtpLogin() {
   }, [resendCountdown]);
 
   useEffect(() => {
-    const recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      {
-        size: "invisible",
-      }
-    );
+    const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+      size: "invisible",
+    });
 
     setRecaptchaVerifier(recaptchaVerifier);
 
@@ -76,10 +72,9 @@ function OtpLogin() {
 
       try {
         await confirmationResult?.confirm(otp);
-        router.replace("/");
+        router.replace("/profile");
       } catch (error) {
         console.log(error);
-
         setError("Failed to verify OTP. Please check the OTP.");
       }
     });
@@ -87,7 +82,6 @@ function OtpLogin() {
 
   const requestOtp = async (e?: FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
-
     setResendCountdown(60);
 
     startTransition(async () => {
@@ -105,7 +99,7 @@ function OtpLogin() {
         );
 
         setConfirmationResult(confirmationResult);
-        setSuccess("OTP sent successfully.");
+        setSuccess("OTP sent successfully ✅");
       } catch (err: any) {
         console.log(err);
         setResendCountdown(0);
@@ -125,7 +119,7 @@ function OtpLogin() {
     <div role="status" className="flex justify-center">
       <svg
         aria-hidden="true"
-        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-green-600"
+        className="w-6 h-6 text-gray-200 animate-spin fill-blue-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -139,62 +133,81 @@ function OtpLogin() {
           fill="currentFill"
         />
       </svg>
-      <span className="sr-only">Loading...</span>
     </div>
   );
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
+      {/* Step 1: Phone Number Input */}
       {!confirmationResult && (
-        <form onSubmit={requestOtp}>
+        <form onSubmit={requestOtp} className="space-y-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Enter Mobile Number
+          </label>
           <Input
-            className="text-black"
+            placeholder="+91 9876543210"
+            className="text-black border-gray-300 focus:ring-2 focus:ring-blue-500"
             type="tel"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <p className="text-xs text-gray-400 mt-2">
-            Please enter your number with the country code (i.e. +44 for UK)
+          <p className="text-xs text-gray-400">
+            Please include your country code (e.g., +91 for India).
           </p>
         </form>
       )}
 
+      {/* Step 2: OTP Input */}
       {confirmationResult && (
-        <InputOTP maxLength={6} value={otp} onChange={(value) => setOtp(value)}>
-          <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-          </InputOTPGroup>
-          <InputOTPSeparator />
-          <InputOTPGroup>
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
-          </InputOTPGroup>
-        </InputOTP>
+        <div className="flex flex-col items-center space-y-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Enter OTP
+          </label>
+          <InputOTP
+            maxLength={6}
+            value={otp}
+            onChange={(value) => setOtp(value)}
+            className="flex justify-center gap-2"
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
       )}
 
+      {/* Button */}
       <Button
         disabled={!phoneNumber || isPending || resendCountdown > 0}
         onClick={() => requestOtp()}
-        className="mt-5"
+        className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
       >
         {resendCountdown > 0
-          ? `Resend OTP in ${resendCountdown}`
+          ? `Resend OTP in ${resendCountdown}s`
           : isPending
-          ? "Sending OTP"
+          ? "Sending OTP..."
           : "Send OTP"}
       </Button>
 
-      <div className="p-10 text-center">
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
+      {/* Status Messages */}
+      <div className="mt-4 text-center">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {success && <p className="text-green-600 text-sm">{success}</p>}
       </div>
 
+      {/* Invisible Recaptcha */}
       <div id="recaptcha-container" />
 
-      {isPending && loadingIndicator}
+      {/* Loader */}
+      <div className="mt-4 flex justify-center">{isPending && loadingIndicator}</div>
     </div>
   );
 }
