@@ -37,8 +37,4 @@ export interface PredictionResponse {
   user: User;
 }
 
-export interface RBIInterestRate {
-  label: string;
-  value: string;
-  lastUpdated?: string;
-}
+

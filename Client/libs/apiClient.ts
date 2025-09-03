@@ -1,37 +1,47 @@
-// src/lib/apiClient.ts
-import axios from 'axios';
+// /Client/libs/apiClient.ts
 
-// By default, use environment variable for base URL
+import axios from "axios";
+import { LoanFormData, PredictionResponse, User as BackendUser } from "@/types";
+
+// Create an Axios instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api',
-  withCredentials: true, // Important: send/receive cookies for session
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api",
+  withCredentials: true, // Important: ensures cookies (for sessions) sent automatically
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 export default api;
 
-// API helper functions
+// --- API Helper Functions ---
 
-import { LoanFormData, PredictionResponse, User } from '../types';
-
-export const sessionLogin = async (idToken: string) => {
-  const { data } = await api.post<{ success: boolean; user: User }>('/sessionLogin', { idToken });
+// 1. Start a secure session after Firebase login
+export async function sessionLogin(idToken: string): Promise<{ success: boolean; user: BackendUser }> {
+  const { data } = await api.post("/sessionLogin", { idToken });
   return data;
-};
+}
 
-export const saveForm = async (formData: LoanFormData) => {
-  const { data } = await api.post<{ success: boolean; user: User }>('/save-form', formData);
+// 2. Save the user's form data before prediction
+export async function saveForm(formData: LoanFormData): Promise<{ success: boolean; user: BackendUser }> {
+  const { data } = await api.post("/save-form", formData);
   return data;
-};
+}
 
-export const predictLoan = async () => {
-  const { data } = await api.post<PredictionResponse>('/predict');
+// 3. Ask backend to make a loan eligibility prediction
+export async function predictLoan(): Promise<PredictionResponse> {
+  const { data } = await api.post("/predict");
   return data;
-};
+}
 
-export const getCurrentUser = async () => {
-  const { data } = await api.get<{ user: User }>('/me');
+// 4. Get current logged-in user from backend
+export async function getCurrentUser(): Promise<{ user: BackendUser }> {
+  const { data } = await api.get("/me");
   return data;
-};
+}
+
+// Optionally: add a logout function if your backend supports it
+export async function sessionLogout(): Promise<{ success: boolean }> {
+  const { data } = await api.post("/logout");
+  return data;
+}

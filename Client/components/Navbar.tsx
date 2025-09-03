@@ -38,13 +38,13 @@ export default function NavBar() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {nav.map((n) => (
-            <button
+            <Link
               key={n.href}
-              onClick={() => handleNavClick(n.href)}
+              href={n.href}
               className="text-sm text-gray-600 hover:text-gray-900"
             >
               {n.label}
-            </button>
+            </Link>
           ))}
         </nav>
 
@@ -79,13 +79,14 @@ export default function NavBar() {
         <div className="border-t bg-white md:hidden">
           <div className="mx-auto flex max-w-7xl flex-col px-4 py-3">
             {nav.map((n) => (
-              <button
+              <Link
                 key={n.href}
-                onClick={() => handleNavClick(n.href)}
-                className="rounded-md px-2 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                href={n.href}
+                onClick={() => setOpen(false)}
+                className="rounded-md px-2 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 {n.label}
-              </button>
+              </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2">
               <button
