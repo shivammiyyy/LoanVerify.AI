@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load the trained model
-model = joblib.load("model\decision_tree_model.pkl")
+model = joblib.load("model/decision_tree_model.pkl")
 
 @app.route('/')
 def index():

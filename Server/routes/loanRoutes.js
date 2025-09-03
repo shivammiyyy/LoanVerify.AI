@@ -1,19 +1,21 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { sessionLogin, saveUserData, saveLoanForm, predictLoan, getCurrentUser } from '../controllers/loanControllers.js';
+import { phoneLogin, saveLoanForm, predictLoan, getCurrentUser } from '../controllers/loanControllers.js';
 
 const router = express.Router();
 
-// 1. Complete Firebase sign-in: verify ID token and start session
-router.post('/sessionLogin', sessionLogin);
+// Remove Firebase sessionLogin route
 
-// 2. Save user additional form data (requires auth)
+// Add new phoneLogin route for phone.email authentication
+router.post('/phone-login', phoneLogin);
+
+// Save user additional form data (requires auth)
 router.post('/save-form', authMiddleware, saveLoanForm);
 
-// 3. Predict loan eligibility
+// Predict loan eligibility (requires auth)
 router.post('/predict', authMiddleware, predictLoan);
 
-// 4. Get the current user's record
+// Get the current user's record (requires auth)
 router.get('/me', authMiddleware, getCurrentUser);
 
 export default router;

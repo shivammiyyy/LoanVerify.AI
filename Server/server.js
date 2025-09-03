@@ -5,16 +5,16 @@ import cors from 'cors';
 import 'dotenv/config';
 import loanRouter from './routes/loanRoutes.js';
 
-// Firebase Admin setup
-import admin from "firebase-admin";
-
-
+// Remove Firebase Admin import and initialization
+// import admin from "firebase-admin";
 
 const app = express();
 
-admin.initializeApp({
-  credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-});
+// Remove Firebase admin initialization
+// admin.initializeApp({
+//   credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
+// });
+
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
@@ -24,6 +24,22 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true 
 }));
+
+import session from 'express-session';
+
+// In your Express app setup, before routes:
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',  // Use strong secret & keep safe via env
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days in milliseconds or whatever you need
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // True if HTTPS is used in prod
+    sameSite: 'lax',
+  }
+}));
+
 
 // Routes
 app.use('/api', loanRouter);

@@ -1,5 +1,3 @@
-// /Client/libs/apiClient.ts
-
 import axios from "axios";
 import { LoanFormData, PredictionResponse, User as BackendUser } from "@/types";
 
@@ -16,9 +14,9 @@ export default api;
 
 // --- API Helper Functions ---
 
-// 1. Start a secure session after Firebase login
-export async function sessionLogin(idToken: string): Promise<{ success: boolean; user: BackendUser }> {
-  const { data } = await api.post("/sessionLogin", { idToken });
+// 1. Phone login: send phone.email user_json_url to backend for verification and session init
+export async function phoneLogin(user_json_url: string): Promise<{ success: boolean; user: BackendUser }> {
+  const { data } = await api.post("/phone-login", { user_json_url });
   return data;
 }
 
@@ -40,7 +38,7 @@ export async function getCurrentUser(): Promise<{ user: BackendUser }> {
   return data;
 }
 
-// Optionally: add a logout function if your backend supports it
+// 5. Logout (invalidate session)
 export async function sessionLogout(): Promise<{ success: boolean }> {
   const { data } = await api.post("/logout");
   return data;
